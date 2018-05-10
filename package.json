@@ -1,0 +1,19 @@
+{
+  "name": "scroll-step",
+  "version": "1.0.0",
+  "license": "MIT",
+  "scripts": {
+    "start": "idyll index.idyll --theme tufte --layout centered --watch",
+    "build": "idyll index.idyll --theme tufte --layout centered",
+    "deploy": "npm run build && gh-pages -d ./build"
+  },
+  "dependencies": {
+    "d3": "^4.0.0",
+    "idyll": "^2.0.0",
+    "idyll-component-children": "^1.0.5",
+    "idyll-d3-component": "^2.0.0"
+  },
+  "devDependencies": {
+    "gh-pages": "^0.12.0"
+  }
+}

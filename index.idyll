@@ -1,0 +1,241 @@
+[meta title:"Scroll Step" description:"Scaffolding Interactives" /]
+
+[Header
+  title:"Scaffolding Interactives"
+  subtitle:"Using Idyll to rapidly create interactive narratives, a walkthrough."
+  author:"Matthew Conlen"
+  authorLink:"https://twitter.com/mathisonian" /]
+
+[Idyll](https://idyll-lang.org/) is an open source software project
+that I work on at the [University of Washington](https://www.cs.washington.edu/)
+[span] [/span] [Interactive Data Lab](https://idl.cs.washington.edu/). It can
+be used to help quickly structure, write, and deploy [interactive posts](https://idyll-lang.org/gallery)
+like this one.
+
+This post is meant to showcase recent updates
+to the way that *scroll* and *step* functionality is defined.
+This page is built from one single `.idyll` markup file, with
+no external JavaScript or CSS.
+
+//  Feel free to choose
+
+// a theme:
+
+// [var name:"theme" value:"tufte" /]
+// [var name:"layout" value:"centered" /]
+
+// [derived name:"customURL" value:`"https://idyll-lang.org/"`  /]
+
+// [derived
+//   name:"updateTheme"
+//   value:`theme !== "tufte" ? (window.location = customURL) : 0 `   /]
+
+// [derived
+//   name:"updateLayout"
+//   value:`layout !== "centered" ? console.log('update layout') && 1 : 0 `   /]
+
+// Theme:  [select value:theme options:`['github', 'tufte']` /]
+
+// Layout: [select value:layout options:`['blog', 'centered']` /]
+
+## Narrative Structures
+
+In this post we cover two types of narrative structures: *steppers*, and *scrollers*. As we'll see, although these layouts are visually distinct, Idyll provides a similar declarative specification
+for each. Both may be further parameterized and customized to support a range of design output.
+
+### Steppers
+
+A `Stepper` can be thought of as an abstract version of a slideshow. There are controls that allow the
+user to navigate through a series of steps. A persistant graphic may also provided in order to create
+visualizations with [object constancy](https://www.quora.com/What-is-object-constancy-in-D3-js-and-how-does-one-implement-it).
+
+For example, one could use the ` Stepper ` component to create a slideshow with
+captions for each image.
+
+
+[var name:"index" value:0 /]
+[Stepper currentStep:index]
+  [Graphic]
+     [img src:`"static/images/examples/" + index + ".png"` /]
+  [/Graphic]
+
+  [Step][The Barnes-Hut Approximation: Efficient computation of N-body forces](https://idyll-lang.org/gallery/the-barnes-hut-approximation)[/Step]
+  [Step][Kernel Density Estimation: An Interactive Explanation of the Statistical Technique](https://idyll-lang.org/gallery/kernel-density-estimation)[/Step]
+  [Step][The Etymology of Trig Functions](https://idyll-lang.org/gallery/the-etymology-of-trig-functions)[/Step]
+
+  [StepperControl /]
+[/Stepper]
+
+That is created with the following markup:
+
+```
+[var name:"stepperIndex" value:0 /]
+
+[Stepper currentStep:stepperIndex]
+  [Graphic]
+     [img src:`"static/images/examples/" + stepperIndex + ".png"` /]
+  [/Graphic]
+
+  [Step]
+    [The Barnes-Hut Approximation: Efficient computation of N-body forces](https://idyll-lang.org/gallery/the-barnes-hut-approximation)
+  [/Step]
+  [Step]
+    [Kernel Density Estimation: An Interactive Explanation of the Statistical Technique](https://idyll-lang.org/gallery/kernel-density-estimation)
+  [/Step]
+  [Step]
+    [The Etymology of Trig Functions](https://idyll-lang.org/gallery/the-etymology-of-trig-functions)
+  [/Step]
+
+  [StepperControl /]
+[/Stepper]
+```
+
+In this example, a variable named `stepperIndex` is bound to the
+ `currentStep` property of the stepper, causing it to automatically
+be updated when the controls are pressed. This in turn causes
+the image source url to update.
+
+The `Graphic` component isn't limited to displaying static images.
+Any [Idyll component](https://idyll-lang.org/docs/components) may be used
+or you can include your own custom [D3](https://idyll-lang.org/gallery/d3) or [React](https://idyll-lang.org/docs/components/custom) component.
+
+
+The functionality of the stepper can be extended, for example
+by adding an `onClick` handler to the `Graphic` component to
+add simple click-through functionality. The size can be modified
+via the `fullWidth` parameter, letting you create feature-sized
+containers.
+
+
+Here I generate some fake data and
+pass it as a property to the [built-in](https://idyll-lang.org/docs/components/default/chart)
+[span] [/span] ` Chart` component inside of a full width `Stepper`. Click on the chart below to continue.
+
+[var name:"clickIndex" value:0 /]
+[var name:"clickData" value:`[0.5, 0.3, 1.2, 0.4, 5, 4, 2, 0.4]` /]
+
+[Stepper fullWidth:true currentStep:clickIndex]
+  [Graphic onClick:`clickIndex = (clickIndex + 1) % clickData.length` style:`{background: 'white', cursor: 'pointer'}`]
+    [Chart
+      type:`"line"`
+      data:`[0, 1].concat(clickData.slice(0, clickIndex))`
+      animate:`{ duration: 500 }` /]
+
+  [/Graphic]
+
+  [Step]## Hey, neat, here's some data![/Step]
+  [Step]## Hey, neat, here's some data! ...   [/Step]
+  [Step]## Hey, neat, here's some data! ...  What's that more data?![/Step]
+  [Step]## Hmm...[/Step]
+  [Step]## Hmm... Too much data.[/Step]
+  [Step]## Stop.[/Step]
+  [Step]## Stop. that.[/Step]
+  [Step]## Stop. that. data[/Step]
+
+[/Stepper]
+
+Here's the code to generate the example above.
+
+
+```
+
+[var name:"clickIndex" value:0 /]
+[var name:"clickData" value:`[0.5, 0.3, 1.2, 0.4, 5, 4, 2, 0.4]` /]
+
+[Stepper fullWidth:true currentStep:clickIndex]
+  [Graphic
+    onClick:`clickIndex = (clickIndex + 1) % clickData.length`
+    style:`{background: 'white', cursor: 'pointer'}`]
+
+    [Chart
+      type:`"line"`
+      data:`[0, 1].concat(clickData.slice(0, clickIndex))`
+      animate:`{ duration: 500 }` /]
+
+  [/Graphic]
+
+  [Step]## Hey, neat, here's some data![/Step]
+  [Step]## Hey, neat, here's some data! ...   [/Step]
+  [Step]## Hey, neat, here's some data! ...  What's that more data?![/Step]
+  [Step]## Hmm...[/Step]
+  [Step]## Hmm... Too much data.[/Step]
+  [Step]## Stop.[/Step]
+  [Step]## Stop. that.[/Step]
+  [Step]## Stop. that. data[/Step]
+
+[/Stepper]
+```
+
+Notice that I removed the default stepper controls in the code above and replaced it with
+a custom click handler on the chart.
+
+You can use Idyll's [dataset syntax](https://idyll-lang.org/docs/syntax#datasets) to quickly import your own data JSON or CSV files. And, while, the built in chart component is adequate for examples, you might need a more powerful tool. In that case you might look to the [Idyll Vega Lite component](https://idyll-lang.org/gallery/vega-lite).
+
+
+
+
+### Scrollers
+
+The `Scroller` component can be used to reproduce the experience above
+using scroll events rather than clicks.
+
+Scroll through, and then notice how similar the code is to the `Stepper`
+example above.
+
+
+[var name:"scrollerChartIndex" value:0 /]
+[var name:"scrollerChartData" value:`[0.5, 0.3, 1.2, 0.4, 5, 4, 2, 0.4]` /]
+
+[Scroller currentStep:scrollerChartIndex]
+  [Graphic style:`{padding: 50}`]
+      [Chart
+        type:`"line"`
+        data:`scrollerChartData.slice(0, scrollerChartIndex + 2)`
+        animate:`{ duration: 500 }` /]
+  [/Graphic]
+
+  [Step]## Hey, neat, here's some data![/Step]
+  [Step]## ...   [/Step]
+  [Step]## ...  What's that more data?![/Step]
+  [Step]## Hmm...[/Step]
+  [Step]## Too much data.[/Step]
+  [Step]## Stop.[/Step]
+  [Step]## that.[/Step]
+  [Step]## data[/Step]
+[/Scroller]
+
+
+Code for the above:
+
+```
+[Scroller currentStep:scrollerIndex]
+  [Graphic style:`{padding: 50}`]
+      [Chart type:`"line"` data:`scrollerChartData.slice(0, scrollerIndex + 2)` /]
+  [/Graphic]
+
+  [Step]## Hey, neat, here's some data![/Step]
+  [Step]## ...   [/Step]
+  [Step]## ...  What's that more data?![/Step]
+  [Step]## Hmm...[/Step]
+  [Step]## Too much data.[/Step]
+  [Step]## Stop.[/Step]
+  [Step]## that.[/Step]
+  [Step]## data[/Step]
+
+[/Scroller]
+```
+
+The specifications for each are similar enough that
+this may help with rapidly testing designs across the
+different modalities.
+
+These components work with all of the various
+Idyll [themes and layouts](https://idyll-lang.org/docs/configuration-and-styles).
+
+
+## End Notes
+
+To get started using Idyll, head to [the docs](https://idyll-lang.org/docs/getting-started),
+or read [this interactive overview](https://idyll-lang.org/gallery/take-a-walk-on-the-idyll-side) of the project. Here are links to [more examples](https://idyll-lang.org/gallery) and an [in-browser Idyll editor](http://idyll-lang.org/editor/).
+
+If you want to support the project consider [buying a sticker](https://opencollective.com/idyll), or tackling one of the issues tagged as [help wanted](https://github.com/idyll-lang/idyll/issues?q=is%3Aissue+is%3Aopen+label%3A%22help+wanted%22) on [GitHub](https://github.com/idyll-lang/idyll).
