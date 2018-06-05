@@ -17,27 +17,6 @@ to the way that *scroll* and *step* functionality is defined.
 This page is built from one single `.idyll` markup file, with
 no external JavaScript or CSS.
 
-//  Feel free to choose
-
-// a theme:
-
-// [var name:"theme" value:"tufte" /]
-// [var name:"layout" value:"centered" /]
-
-// [derived name:"customURL" value:`"https://idyll-lang.org/"`  /]
-
-// [derived
-//   name:"updateTheme"
-//   value:`theme !== "tufte" ? (window.location = customURL) : 0 `   /]
-
-// [derived
-//   name:"updateLayout"
-//   value:`layout !== "centered" ? console.log('update layout') && 1 : 0 `   /]
-
-// Theme:  [select value:theme options:`['github', 'tufte']` /]
-
-// Layout: [select value:layout options:`['blog', 'centered']` /]
-
 ## Narrative Structures
 
 In this post we cover two types of narrative structures: *steppers*, and *scrollers*. As we'll see, although these layouts are visually distinct, Idyll provides a similar declarative specification
